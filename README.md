@@ -25,6 +25,138 @@ Los pasos a seguir son los siguientes:
 
 <img src="https://github.com/vianeyja/OCR-ImageEnhance/blob/master/imgs/AppSettings2.PNG" width="200" height="200">
 
+7. Una vez que tenemos creado este parámetro, tenemos que modificar el código de nuestra función HTTP Trigger. El código es el siguiente:
+```csharp
+#r "System.Drawing"
+#r "System.IO"
+#r "Microsoft.WindowsAzure.Storage"
+
+using System.IO;
+using System.Net;
+using System.Drawing;
+using System.Drawing.Imaging;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Blob;
+
+public static async Task<HttpResponseMessage> Run(HttpRequestMessage req,  TraceWriter log)
+{
+    log.Info("C# HTTP trigger function processed a request.");
+
+    //Get the connection string from the Application Settings (The name of the key-value is BroxelString but ypu can change it)
+    string connectionstring = GetEnvironmentVariable("BroxelString");
+
+    // url of the image you will convert to black and white
+    string url = req.GetQueryNameValuePairs()
+        .FirstOrDefault(q => string.Compare(q.Key, "url", true) == 0)
+        .Value;
+
+    //Container name where you will store the images
+    string containername = req.GetQueryNameValuePairs()
+        .FirstOrDefault(q => string.Compare(q.Key, "containername", true) == 0)
+        .Value;
+    
+    string path = req.GetQueryNameValuePairs()
+        .FirstOrDefault(q => string.Compare(q.Key, "path", true) == 0)
+        .Value;
+
+    if (url == null || containername == null || path == null)
+    {
+        // Get request body
+        dynamic data = await req.Content.ReadAsAsync<object>();
+        url = data?.url; 
+        containername = data?.containername;
+        path = data?.path;
+    }
+
+    Bitmap c = (Bitmap)Bitmap.FromStream(new MemoryStream(new WebClient().DownloadData(url))); 
+    Bitmap d = MakeGrayscale3(c); 
+
+    var ms = new MemoryStream();
+    d.Save(ms, ImageFormat.Png);
+
+    ms.Position = 0;
+
+    // Retrieve storage account from connection string.
+    CloudStorageAccount storageAccount = CloudStorageAccount.Parse(connectionstring);
+
+    // Create the blob client.
+    CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
+
+    // Retrieve a reference to a container.
+    CloudBlobContainer container = blobClient.GetContainerReference(containername);
+    // Create the container if it doesn't already exist.
+    await container.CreateIfNotExistsAsync();
+
+    // create a blob in the path of the <container>
+    CloudBlockBlob blockBlob = container.GetBlockBlobReference(path);
+
+    await blockBlob.UploadFromStreamAsync(ms);
+
+    
+    return url == null
+        ? req.CreateResponse(HttpStatusCode.BadRequest, "Please pass a url on the query string or in the request body")
+        : req.CreateResponse(HttpStatusCode.OK, blockBlob.Uri);
+}
+
+public static Bitmap MakeGrayscale3(Bitmap original)
+{
+
+    //create a blank bitmap the same size as original
+    Bitmap newBitmap = new Bitmap(original.Width, original.Height);
+
+    //get a graphics object from the new image
+    Graphics g = Graphics.FromImage(newBitmap); 
+
+    //create the grayscale ColorMatrix
+    ColorMatrix colorMatrix = new ColorMatrix(
+            new float[][] {
+            new float[] { 0.299f, 0.299f, 0.299f, 0, 0 },
+            new float[] { 0.587f, 0.587f, 0.587f, 0, 0 },
+            new float[] { 0.114f, 0.114f, 0.114f, 0, 0 },
+            new float[] { 0,      0,      0,      1, 0 },
+            new float[] { 0,      0,      0,      0, 1 }
+    });
+
+    float c = 120 * 0.01f;
+    float t = 0.01f;
+    ColorMatrix colorMatrixContrast = new ColorMatrix(new float[][] {
+            new float[] {c,0,0,0,0},
+            new float[] {0,c,0,0,0},
+            new float[] {0,0,c,0,0},
+            new float[] {0,0,0,1,0},
+            new float[] {t,t,t,0,1}
+    });
+    //create some image attributes
+    ImageAttributes attributes = new ImageAttributes();
+    ImageAttributes contrast = new ImageAttributes();
+
+    //set the color matrix attribute
+    attributes.SetColorMatrix(colorMatrix);
+    contrast.SetColorMatrix(colorMatrixContrast);
+
+    //draw the original image on the new image
+    //using the grayscale color matrix
+    g.DrawImage(original, new Rectangle(0, 0, original.Width, original.Height),
+               0, 0, original.Width, original.Height, GraphicsUnit.Pixel, attributes);
+
+            g.DrawImage(newBitmap, new Rectangle(0, 0, original.Width, original.Height),
+               0, 0, original.Width, original.Height, GraphicsUnit.Pixel, contrast);
+
+            if (newBitmap.Height > 2000 || newBitmap.Width > 2000)
+            {
+                newBitmap = new Bitmap(newBitmap, new Size(original.Width / 2, original.Height / 2));
+            }
+            //dispose the Graphics object
+            g.Dispose();
+            return newBitmap;
+}
+
+public static string GetEnvironmentVariable(string name)
+{
+    return System.Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.Process);
+}
+```
+
 
 
 
