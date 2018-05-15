@@ -163,7 +163,8 @@ El body que espera la función es el siguiente:
 * url: la url de la imagen a leer
 * containername: el nombre del contenedor donde se almacenarán las imágenes
 * path: el path o nombre de donde se almacenará la imagen (ejemplo: imagenblanconegro/imagen.jpg)
-<img src="https://github.com/vianeyja/OCR-ImageEnhance/blob/master/imgs/post.PNG" width="500" height="400">
+
+<img src="https://github.com/vianeyja/OCR-ImageEnhance/blob/master/imgs/post.PNG" width="400" height="200">
 
 
 
