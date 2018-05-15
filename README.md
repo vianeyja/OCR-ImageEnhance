@@ -25,7 +25,7 @@ Los pasos a seguir son los siguientes:
 
 <img src="https://github.com/vianeyja/OCR-ImageEnhance/blob/master/imgs/AppSettings2.PNG" width="200" height="200">
 
-7. Una vez que tenemos creado este parámetro, tenemos que modificar el código de nuestra función HTTP Trigger. El código es el siguiente:
+7. Una vez que tenemos creado este parámetro, tenemos que modificar el código de nuestra función HTTP Trigger para obtener la imagen de una url, modificar el color, el contraste, almacenarla en el blob sotrage y regresar la url en donde se almacenó. El código es el siguiente:
 ```csharp
 #r "System.Drawing"
 #r "System.IO"
@@ -156,6 +156,14 @@ public static string GetEnvironmentVariable(string name)
     return System.Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.Process);
 }
 ```
+Para consumir esta función, es necesario hacer un llamado de tipo POST a la función. La URL de nuestra función la podemos obtener desde el portal.
+<img src="https://github.com/vianeyja/OCR-ImageEnhance/blob/master/imgs/geturl.PNG" width="400" height="100">
+
+El body que espera la función es el siguiente:
+* url: la url de la imagen a leer
+* containername: el nombre del contenedor donde se almacenarán las imágenes
+* path: el path o nombre de donde se almacenará la imagen (ejemplo: imagenblanconegro/imagen.jpg)
+<img src="https://github.com/vianeyja/OCR-ImageEnhance/blob/master/imgs/post.PNG" width="500" height="400">
 
 
 
