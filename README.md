@@ -171,4 +171,9 @@ La respuesta que regresa el servicio debe ser con estatus 200 y la url de nuestr
 
 <img src="https://github.com/vianeyja/OCR-ImageEnhance/blob/master/imgs/response.PNG" width="400" height="200">
 
+Una vez que contamos con la imagen, podemos llamar a nuestro servicio cognitivo o probarlo en el [demo](https://azure.microsoft.com/en-us/services/cognitive-services/computer-vision/) disponible en la página.
 
+<img src="https://github.com/vianeyja/OCR-ImageEnhance/blob/master/imgs/cs.PNG" width="400" height="200">
+
+##Referencias
+[]()
