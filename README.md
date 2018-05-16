@@ -175,5 +175,8 @@ Una vez que contamos con la imagen, podemos llamar a nuestro servicio cognitivo 
 
 <img src="https://github.com/vianeyja/OCR-ImageEnhance/blob/master/imgs/cs.PNG" width="400" height="200">
 
-##Referencias
-[]()
+## Referencias
+* [Servicios Cognitivos](https://azure.microsoft.com/es-es/services/cognitive-services/)
+* [Azure Functions](https://azure.microsoft.com/es-es/services/functions/)
+* [Bitmap Images](https://msdn.microsoft.com/es-es/library/system.drawing.bitmap(v=vs.110).aspx)
+* [Matrices de color](https://docs.microsoft.com/es-es/dotnet/framework/winforms/advanced/how-to-use-a-color-matrix-to-transform-a-single-color)
