@@ -157,7 +157,8 @@ public static string GetEnvironmentVariable(string name)
 }
 ```
 Para consumir esta función, es necesario hacer un llamado de tipo POST a la función. La URL de nuestra función la podemos obtener desde el portal.
-<img src="https://github.com/vianeyja/OCR-ImageEnhance/blob/master/imgs/geturl.PNG" width="400" height="100">
+
+<img src="https://github.com/vianeyja/OCR-ImageEnhance/blob/master/imgs/geturl.PNG" width="300" height="100">
 
 El body que espera la función es el siguiente:
 * url: la url de la imagen a leer
@@ -166,6 +167,8 @@ El body que espera la función es el siguiente:
 
 <img src="https://github.com/vianeyja/OCR-ImageEnhance/blob/master/imgs/post.PNG" width="400" height="200">
 
+La respuesta que regresa el servicio debe ser con estatus 200 y la url de nuestra imagen en blanco y negro dentro del body.
 
+<img src="https://github.com/vianeyja/OCR-ImageEnhance/blob/master/imgs/response.PNG" width="400" height="200">
 
 
